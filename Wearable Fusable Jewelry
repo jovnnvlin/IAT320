@@ -1,0 +1,29 @@
+#include <Adafruit_NeoPixel.h>
+
+// Which pin on the Arduino is connected to the NeoPixels?
+#define LED_PIN    6
+
+// How many NeoPixels are attached to the Arduino?
+#define LED_COUNT 1
+
+// Declare our NeoPixel strip object:
+Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+// Argument 1 = Number of pixels in NeoPixel strip
+// Argument 2 = Arduino pin number (most are valid)
+// Argument 3 = Pixel type flags, add together as needed:
+//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
+
+void setup() {
+  strip.begin();
+  strip.show(); // Initialize all pixels to 'off'
+}
+
+void loop() {
+  strip.setPixelColor(0, 0, 255, 0); // set color to green
+  strip.setBrightness(255);  // set brightness to the max
+  strip.show(); 
+  delay(1000); // wait a second
+  strip.setPixelColor(0, 0, 150, 0); // set to a slightly darker green
+  strip.show();
+  delay(1000); //wait a second
+}
