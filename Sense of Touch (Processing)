@@ -1,0 +1,105 @@
+//drum sounds used
+//https://freesound.org/people/Trvth/sounds/488464/
+//https://freesound.org/people/Trvth/sounds/488459/
+//https://freesound.org/people/Trvth/sounds/488466/
+
+import processing.serial.*;
+Serial port; // Create object from Serial class
+
+int total1; // Data received from the serial port - variable to store the touch sensor data
+int total2;
+int total3;
+
+byte[] inBuffer = new byte[255]; 
+
+import processing.sound.*;
+
+SoundFile bass;
+SoundFile snare;
+SoundFile cymbal;
+
+void setup() {
+  size(640, 400); //size of window
+  noStroke();
+  frameRate(10); // Run 10 frames per second 
+
+  // Open the port that the board is connected to and use the same speed (9600 bps)
+  port = new Serial(this, "COM8", 9600);
+
+  bass = new SoundFile (this, "bass.wav");
+  snare = new SoundFile (this, "snare.wav");
+  cymbal = new SoundFile (this, "cymbal.wav");
+}
+
+
+void draw() {
+  if (0 < port.available()) { // If data is available to read,
+
+    println(" ");
+
+    port.readBytesUntil('&', inBuffer);  //read in all data until '&' is encountered
+
+    if (inBuffer != null) {
+      String myString = new String(inBuffer);
+
+      //p is all sensor data (with a's, b's, c's) ('&' is eliminated) ///////////////
+
+      String[] p = splitTokens(myString, "&");  
+      if (p.length < 2) return;  //exit this function if packet is broken
+
+      String[] touch1 = splitTokens(p[0], "a");  
+      total1 = int(touch1[1]);
+
+      print("touch1:");
+      print(total1);
+      println(" ");  
+
+      String[] touch2 = splitTokens(p[0], "b"); 
+      total2 = int(touch2[1]);
+
+      print("touch2:");
+      print(total2);
+      println(" "); 
+
+      String[] touch3 = splitTokens(p[0], "c");  
+      total3 = int(touch3[1]);
+
+      print("touch3:");
+      print(total3);
+      println(" "); 
+
+      //sound
+      if (total1>1) {
+        bass.play();
+        delay(100);
+      }
+
+      if (total2>1) {
+        snare.play();
+        delay(100);
+      }
+
+      if (total3>1) {
+        cymbal.play();
+        delay(100);
+      }
+
+      //display square,circle and triangle, to illustrate functionality of code
+
+      background(245); // Clear background
+      fill(0);
+      stroke(0);
+
+      fill(total1*10); // Set fill color with the value read
+      rect(35, 60, 150, 150); // Draw square
+
+      fill(total2*10);
+      ellipse(290, 290, 200, 200);
+
+      fill(total3*10);
+      triangle(400, 200, 600, 200, 500, 50);
+
+      //done
+    }
+  }
+}
